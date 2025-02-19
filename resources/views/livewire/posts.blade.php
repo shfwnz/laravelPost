@@ -20,7 +20,7 @@
             @endif
 
             <div>
-                <input type="text" wire:model="search" class="border p-2 rounded w-full" placeholder="Cari Post...">
+                <input type="text" wire:model.live="search" class="border p-2 rounded w-full" placeholder="Cari Post...">
             </div>
 
             <div class="flex justify-end">
@@ -54,10 +54,8 @@
                     @endforeach
                 </tbody>
             </table>
-        </div>
-        <div class="mt-4">
-            <div class="">
-                {!! $posts->links() !!}
+            <div class="mt-4">
+                {{ $posts->links() }}
             </div>
         </div>
     </div>

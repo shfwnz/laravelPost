@@ -2,22 +2,48 @@
   
 namespace App\Livewire;
   
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\WithPagination;
 use Livewire\Component;
 use App\Models\Post;
   
 class Posts extends Component
 {
-    public $title, $body, $post_id;
-    // public $search = '';
+    public $title, $body, $post_id, $search;
     public $isOpen = 0;
+    public $error = '';
 
     use WithPagination;
+    protected $updatesQueryString = ['search'];
   
     public function render()
     {
-        $posts = Post::paginate(10);
-        return view('livewire.posts', ['posts' => $posts]);
+        $posts = Post::paginate(5);
+
+        if (!empty($this->search)) {
+            $posts = Post::where('title', 'like', '%' . $this->search . '%')
+                            ->latest()
+                            ->paginate(5);
+        }
+
+        return view('livewire.posts', [
+            'posts' => $posts,
+        ]);
+    }
+
+    // public function render()
+    // {
+    //     $posts = Post::paginate(10);
+    //     return view('livewire.posts', ['posts' => $posts]);
+    // }
+
+    public function search(){
+        try {
+            $post = Post::where('name', 'like', '%'.$this->search.'%')->first();
+            $this->reset(['error']); // set $error to default i.e. ''
+        } catch(ModelNotFoundException $e) {
+            $this->error = 'Product not found.';
+        }
     }
   
     public function create()
